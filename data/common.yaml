@@ -1,0 +1,35 @@
+---
+# roles
+slurm::client: true
+slurm::slurmd: false
+slurm::slurmdbd: false
+slurm::slurmctld: false
+
+# Slurm user and group management related options
+slurm::manage_slurm_user: true
+slurm::slurm_user: 'slurm'
+slurm::slurm_user_uid: 468
+slurm::slurm_user_group: 'slurm'
+slurm::slurm_user_group_gid: 468
+slurm::slurm_user_shell: '/sbin/nologin'
+slurm::slurm_user_home: '/var/lib/slurm'
+slurm::slurm_user_managehome: true
+slurm::slurm_user_comment: 'SLURM User'
+
+# Slurm services related configuration options
+slurm::reload_services: true
+slurm::restart_services: false
+slurm::slurmd_service_ensure: 'running'
+slurm::slurmd_service_enable: true
+slurm::slurmd_service_limits: {}
+slurm::slurmdbd_service_ensure: 'running'
+slurm::slurmdbd_service_enable: true
+slurm::slurmdbd_service_limits: {}
+slurm::slurmctld_service_ensure: 'running'
+slurm::slurmctld_service_enable: true
+slurm::slurmctld_service_limits: {}
+
+# Other settings
+slurm::package_ensure: 'present'
+slurm::manage_logrotate: true
+slurm::manage_firewall: false
