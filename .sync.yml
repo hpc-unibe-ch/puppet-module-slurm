@@ -12,3 +12,6 @@ Gemfile:
       - gem: 'github_changelog_generator'
         version: '~> 1.15'
         condition: "Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')"
+.gitignore:
+  required:
+    - '.g10k-deploy.json'

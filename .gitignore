@@ -25,3 +25,4 @@
 .project
 .envrc
 /inventory.yaml
+.g10k-deploy.json
