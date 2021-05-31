@@ -1,17 +1,90 @@
-# @summary Simplicistic module to manage Slurm installation
+# @summary Main class that manages every aspect centrally
 #
-# This module currently helps to install. However it does not
-# configure Slurm in terms of contents in /etc/slurm (slurm.conf,
-# gres.conf, ...). Currently the module manages:
-# * Installation of RPMs for given role
+# This module currently orchestrates every installation aspect. However it does not
+# configure Slurm in terms of contents in /etc/slurm (slurm.conf# gres.conf, ...).
+# These aspects have to be handled elsewhere, i.e. in a separate git repository.
+#
+# Currently the module manages:
+# * Installation of RPMs for the selected features
 # * Creation of user and group slurm
+# * Manage files, directories and services accoridng to the selected features
+#
+# Features supported include:
+# * client: only slurm commands, no additional services running
+# * slurmd: slurm daemom is installed and started
+# * slurmdbd: slurm database daemon is installed and started
+# * slurmctld: slurm control daemon is installed and started
+#
+# Features can be added up on the same node!
 #
 # Note on config: Just store contents of `/etc/slurm` in a git repo
 # and clone it on your shared filesystem to the final path using
 # `puppetlabs-vcsrepo`.
 #
-# @example
+# @example Basic setup of a compute node with memlock set to unlimited and increased number of open files
 #   class { 'slurm':
+#     slurmd                => true,
+#     slurmd_service_limits => {
+#       'LimitMEMLOCK' => 'infinity',
+#       'LimitNOFILE'  => 8192,
+#     },
+#     manage_firewall       => true,
+#  }
+#
+# @example Setup of a slurm master with slurmctld and slurmdbd on the same host; reloading services is prevented
+#   class { 'slurm':
+#     slurmdbd        => true,
+#     slurmctld       => true,
+#     reload_services => false,
+#   }
+#
+# @param client
+#   The feature only installs the basic commands; no daemons get deployed; defaults s true
+# @param slurmd
+#   The feature installis the slurm daemon, useful on a compute node; default is false
+# @param slurmdbd
+#   This feature installs the slurm database daemon to talk to a MySQL database server: default is false
+# @param slurmctld
+#   This feature installs the slurm control daemon: default is false
+# @param package_ensure
+#   The defeault package ensure is set to 'present'; use other values if needed
+# Slurm user and group management related options
+# @param manage_slurm_user
+#   Should the module deploy user and gropu to be used for slurm aspects; defaults to true
+# @param slurm_user
+#   The username to use for ownerships of files/directories and services; default is 'slurm'
+# @param slurm_user_uid
+#   The numeric id for the slurm user; default is 468
+# @param slurm_user_group
+#   The group name to use for ownerships of files/directories and services; default is 'slurm'
+# @param slurm_user_group_gid
+#   The numeric id for the slurm group; default is 468
+# @param reload_services
+#   If changes to configuration files occur, should a relaod of the services be done automatically? Default is true
+# @param restart_services
+#   If changes to configuration files occur, should a restart of the services be done automatically; default is false
+# @param slurmd_service_ensure
+#   The defualt state of the slurm daemon; default is 'running'
+# @param slurmd_service_enable
+#   Should the slurm daemon be enabled by systemd; default is true
+# @param slurmd_service_limits
+#   A hash of system resource limits for the slurm daemon, see example; default is empty hash
+# @param slurmdbd_service_ensure
+#   The defualt state of the slurm database daemon; default is 'running'
+# @param slurmdbd_service_enable
+#   Should the slurm database daemon be enabled by systemd; default is true
+# @param slurmdbd_service_limits
+#   A hash of system resource limits for the slurm database daemon, see example; default is empty hash
+# @param slurmctld_service_ensure
+#   The defualt state of the slurm control daemon; default is 'running'
+# @param slurmctld_service_enable
+#   Should the slurm control daemon be enabled by systemd; default is true
+# @param slurmctld_service_limits
+#   A hash of system resource limits for the slurm control daemon, see example; default is empty hash
+# @param manage_logrotate
+#   Should the module manage the logrotaiton of slurm logs; default is true
+# @param manage_firewall
+#   Should the module configure the firewall rules for installed services; default is false
 #
 class slurm (
   Optional[Boolean] $client,
