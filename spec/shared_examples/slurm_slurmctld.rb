@@ -6,7 +6,7 @@ shared_examples_for 'slurm::slurmctld' do
   it { is_expected.to contain_class('slurm::slurmctld::service') }
 
   it_behaves_like 'slurm::common::user'
-  it_behaves_like 'slurm::common::install'
+  it_behaves_like 'slurm::common::install-slurmctld'
   it_behaves_like 'slurm::common::setup'
   it_behaves_like 'slurm::slurmctld::config'
   it_behaves_like 'slurm::slurmctld::service'

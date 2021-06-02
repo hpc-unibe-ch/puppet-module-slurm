@@ -8,8 +8,20 @@ def base_packages
   ]
 end
 
+def deps_packages
+  [
+    'hdf5',
+    'libaec',
+    'pmix',
+  ]
+end
+
 shared_examples_for 'slurm::common::install' do
   base_packages.each do |p|
+    it { is_expected.to contain_package(p).with_ensure('present').without_require }
+  end
+
+  deps_packages.each do |p|
     it { is_expected.to contain_package(p).with_ensure('present').without_require }
   end
 
@@ -25,9 +37,11 @@ end
 shared_examples_for 'slurm::common::install-slurmd' do
   it { is_expected.to contain_package('slurm-slurmd').with_ensure('present').without_require }
 end
+
 shared_examples_for 'slurm::common::install-slurmctld' do
   it { is_expected.to contain_package('slurm-slurmctld').with_ensure('present').without_require }
 end
+
 shared_examples_for 'slurm::common::install-slurmdbd' do
   it { is_expected.to contain_package('slurm-slurmdbd').with_ensure('present').without_require }
 end
