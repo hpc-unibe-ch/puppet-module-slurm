@@ -5,7 +5,7 @@ class slurm::slurmctld::config {
     ensure => 'directory',
     path   => $slurm::slurmctld_state_save_location,
     owner  => $slurm::slurm_user,
-    group  => $slurm::slurm_user_group,
+    group  => $slurm::slurm_group,
     mode   => '0700',
   }
 
@@ -13,7 +13,7 @@ class slurm::slurmctld::config {
     ensure => 'directory',
     path   => $slurm::slurmctld_job_checkpoint_dir,
     owner  => $slurm::slurm_user,
-    group  => $slurm::slurm_user_group,
+    group  => $slurm::slurm_group,
     mode   => '0700',
   }
 }

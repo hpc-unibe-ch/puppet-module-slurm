@@ -9,8 +9,8 @@ slurm::slurmctld: false
 slurm::manage_slurm_user: true
 slurm::slurm_user: 'slurm'
 slurm::slurm_user_uid: 468
-slurm::slurm_user_group: 'slurm'
-slurm::slurm_user_group_gid: 468
+slurm::slurm_group: 'slurm'
+slurm::slurm_group_gid: 468
 slurm::slurm_user_shell: '/sbin/nologin'
 slurm::slurm_user_home: '/var/lib/slurm'
 slurm::slurm_user_managehome: true

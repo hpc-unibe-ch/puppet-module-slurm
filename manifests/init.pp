@@ -55,9 +55,9 @@
 #   The username to use for ownerships of files/directories and services; default is 'slurm'
 # @param slurm_user_uid
 #   The numeric id for the slurm user; default is 468
-# @param slurm_user_group
+# @param slurm_group
 #   The group name to use for ownerships of files/directories and services; default is 'slurm'
-# @param slurm_user_group_gid
+# @param slurm_group_gid
 #   The numeric id for the slurm group; default is 468
 # @param reload_services
 #   If changes to configuration files occur, should a relaod of the services be done automatically? Default is true
@@ -96,8 +96,8 @@ class slurm (
   Optional[Boolean] $manage_slurm_user,
   Optional[String]  $slurm_user,
   Optional[Integer] $slurm_user_uid,
-  Optional[String]  $slurm_user_group,
-  Optional[Integer] $slurm_user_group_gid,
+  Optional[String]  $slurm_group,
+  Optional[Integer] $slurm_group_gid,
   # Services related options
   Optional[Boolean] $reload_services,
   Optional[Boolean] $restart_services,
@@ -151,7 +151,7 @@ class slurm (
   $slurmdbd_conf_path            = "${conf_dir}/slurmdbd.conf"
   $cgroup_conf_path              = "${conf_dir}/cgroup.conf"
 
-  # Compute which services are to be notified and how to notify these on changes
+  # Compute which resources are to be notified and how to notify these on changes
   if $slurmd and $slurmd_service_ensure == 'running' and $reload_services and $facts['slurmd_version'] {
     $slurmd_notify = Exec['slurmd reload']
   } elsif $slurmd and $slurmd_service_ensure == 'running' and $restart_services {
@@ -175,7 +175,8 @@ class slurm (
   } else {
     $slurmdbd_notify = undef
   }
-  # finally combine the ones not undef to an array for later use in slurm::common::install
+
+  # in addition combine the ones not undef to an array for later use in slurm::common::install
   $service_notify = flatten([$slurmd_notify, $slurmctld_notify, $slurmdbd_notify]).filter |$val| { $val =~ NotUndef }
 
   if ! ($client or $slurmd or $slurmdbd or $slurmctld) {

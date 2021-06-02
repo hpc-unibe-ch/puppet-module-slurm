@@ -4,8 +4,8 @@ class slurm::common::user {
   if $slurm::manage_slurm_user {
     group { 'slurm':
       ensure     => present,
-      name       => $slurm::slurm_user_group,
-      gid        => $slurm::slurm_user_group_gid,
+      name       => $slurm::slurm_group,
+      gid        => $slurm::slurm_group_gid,
       forcelocal => true,
       system     => true,
     }
@@ -14,7 +14,7 @@ class slurm::common::user {
       ensure     => present,
       name       => $slurm::slurm_user,
       uid        => $slurm::slurm_user_uid,
-      gid        => $slurm::slurm_user_group,
+      gid        => $slurm::slurm_group_gid,
       shell      => $slurm::slurm_user_shell,
       home       => $slurm::slurm_user_home,
       managehome => $slurm::slurm_user_managehome,

@@ -5,7 +5,7 @@ class slurm::slurmdbd::config {
     ensure => 'directory',
     path   => $slurm::slurmdbd_archive_dir,
     owner  => $slurm::slurm_user,
-    group  => $slurm::slurm_user_group,
+    group  => $slurm::slurm_group,
     mode   => '0700',
   }
 }
