@@ -91,8 +91,8 @@ The following parameters are available in the `slurm` class:
 * [`manage_slurm_user`](#manage_slurm_user)
 * [`slurm_user`](#slurm_user)
 * [`slurm_user_uid`](#slurm_user_uid)
-* [`slurm_user_group`](#slurm_user_group)
-* [`slurm_user_group_gid`](#slurm_user_group_gid)
+* [`slurm_group`](#slurm_group)
+* [`slurm_group_gid`](#slurm_group_gid)
 * [`reload_services`](#reload_services)
 * [`restart_services`](#restart_services)
 * [`slurmd_service_ensure`](#slurmd_service_ensure)
@@ -155,13 +155,13 @@ Data type: `Optional[Integer]`
 
 The numeric id for the slurm user; default is 468
 
-##### <a name="slurm_user_group"></a>`slurm_user_group`
+##### <a name="slurm_group"></a>`slurm_group`
 
 Data type: `Optional[String]`
 
 The group name to use for ownerships of files/directories and services; default is 'slurm'
 
-##### <a name="slurm_user_group_gid"></a>`slurm_user_group_gid`
+##### <a name="slurm_group_gid"></a>`slurm_group_gid`
 
 Data type: `Optional[Integer]`
 

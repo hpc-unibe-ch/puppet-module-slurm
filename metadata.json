@@ -1,7 +1,7 @@
 {
   "name": "hpcunibech-slurm",
   "version": "1.0.0",
-  "author": "Team HPC, IT Services, University of Bern <hpc@id.unibe.ch",
+  "author": "hpc-unibe-ch",
   "summary": "Manages Slurm schduler installation for diffrent node roles. DOES NOT manage slurm configuration",
   "license": "Apache-2.0",
   "source": "https://github.com/hpc-unibe-ch/puppet-module-slurm.git",
