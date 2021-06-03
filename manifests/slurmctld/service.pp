@@ -27,6 +27,7 @@ class slurm::slurmctld::service {
 
   exec { 'scontrol reconfig':
     path        => '/usr/bin:/bin:/usr/sbin:/sbin',
+    command     => 'scontrol reconfigure',
     refreshonly => true,
     require     => Service['slurmctld'],
   }

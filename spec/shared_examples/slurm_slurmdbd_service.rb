@@ -5,14 +5,18 @@ shared_examples_for 'slurm::slurmdbd::service' do
       .with_owner('root')
       .with_group('root')
       .with_mode('0644')
-  end
 
-  it do
     is_expected.to contain_service('slurmdbd')
       .with_ensure('running')
       .with_enable('true')
       .with_hasstatus('true')
       .with_hasrestart('true')
+      .that_comes_before('Exec[slurmdbd reload]')
+
+    is_expected.to contain_exec('slurmdbd reload')
+      .with_path(%r{/usr/bin})
+      .with_command('systemctl reload slurmdbd')
+      .with_refreshonly('true')
   end
 
   context 'with defaults slurmdbd should be reloaded on config change' do
