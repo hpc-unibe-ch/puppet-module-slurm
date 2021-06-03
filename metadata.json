@@ -1,14 +1,29 @@
 {
   "name": "hpcunibech-slurm",
   "version": "1.0.0",
-  "author": "Team HPC, IT Services, University of Bern <hpc@id.unibe.ch",
+  "author": "hpc-unibe-ch",
   "summary": "Manages Slurm schduler installation for diffrent node roles. DOES NOT manage slurm configuration",
   "license": "Apache-2.0",
   "source": "https://github.com/hpc-unibe-ch/puppet-module-slurm.git",
   "project_page": "https://github.com/hpc-unibe-ch/puppet-module-slurm",
   "issues_url": "https://github.com/hpc-unibe-ch/puppet-module-slurm/issues",
   "dependencies": [
-
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">=4.25.1 <8.0.0"
+    },
+    {
+      "name": "puppetlabs/firewall",
+      "version_requirement": ">=1.0.0 <4.0.0"
+    },
+    {
+      "name": "puppet/logrotate",
+      "version_requirement": ">= 3.4.0 <6.0.0"
+    },
+    {
+      "name": "camptocamp/systemd",
+      "version_requirement": ">= 1.1.0 <4.0.0"
+    }
   ],
   "operatingsystem_support": [
     {

@@ -1,8 +1,8 @@
 # @api private
 class slurm::common::setup {
 
-    file { 'slurm confdir':
-    ensure => 'directory',
+  file { 'slurm confdir':
+    ensure => directory,
     path   => $slurm::conf_dir,
     owner  => 'root',
     group  => 'root',
@@ -12,9 +12,9 @@ class slurm::common::setup {
   # Don't need these directories on a client - all other roles need them
   if $slurm::slurmctld or $slurm::slurmdbd or $slurm::slurmd {
     file { $slurm::log_dir:
-      ensure => 'directory',
+      ensure => directory,
       owner  => $slurm::slurm_user,
-      group  => $slurm::slurm_user_group,
+      group  => $slurm::slurm_group,
       mode   => '0750',
     }
 

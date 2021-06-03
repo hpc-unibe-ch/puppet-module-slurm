@@ -1,117 +1,100 @@
 # slurm
 
-Welcome to your new module. A short overview of the generated parts can be found
-in the [PDK documentation][1].
-
-The README template below provides a starting point with details about what
-information to include in your README.
-
 ## Table of Contents
 
-1. [Description](#description)
-1. [Setup - The basics of getting started with slurm](#setup)
+<!-- vim-markdown-toc GFM -->
+
+* [Description](#description)
+* [Setup](#setup)
     * [What slurm affects](#what-slurm-affects)
-    * [Setup requirements](#setup-requirements)
+    * [Setup Requirements](#setup-requirements)
     * [Beginning with slurm](#beginning-with-slurm)
-1. [Usage - Configuration options and additional functionality](#usage)
-1. [Limitations - OS compatibility, etc.](#limitations)
-1. [Development - Guide for contributing to the module](#development)
+* [Usage](#usage)
+* [Reference](#reference)
+* [Limitations](#limitations)
+* [Development](#development)
+
+<!-- vim-markdown-toc -->
 
 ## Description
 
-Briefly tell users why they might want to use your module. Explain what your
-module does and what kind of problems users can solve with it.
-
-This should be a fairly short description helps the user decide if your module
-is what they want.
+This slurm module is a downsized version of [treydock/slurm](https://forge.puppet.com/treydock/slurm).
+Its complexity is reduced by removing all aspects of configuring slum. In short, every aspect that is done in the "slurm dir"
+is removed, i.e. managing partitions, QOS, users, GRES. We at our site are manging the contents of `/etc/slurm` in its own
+git repository independent from managing packges, files and daemons.
 
 ## Setup
 
-### What slurm affects **OPTIONAL**
+### What slurm affects
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
+In short this module only installs relevant packages and dependencies, deploys files and directories (state, log, logroration...)
+and manages daemons and firewall rules.
 
-If there's more that they should know about, though, this is the place to
-mention:
+### Setup Requirements
 
-* Files, packages, services, or operations that the module will alter, impact,
-  or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+The module's design allows changing the most important things through the `slurm` class. The daemons getting installed are chosen
+by the setting the respective attributes to true. More than one role can be deployed on a host, e.g. `slurmdbd` and `slurmctld`. See
+usage examples below.
 
-### Setup Requirements **OPTIONAL**
+In order to use SLURM the munge daemon must be configured and a munge key has to be deployed. This module does not manage neither
+of them. Instead make use of an additional module like [treydock/munge](https://forge.puppet.com/treydock/munge).
 
-If your module requires anything extra before setting up (pluginsync enabled,
-another module, etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section here.
+Instead of declaring the attributes within the a manifest it's perfectly possible to provide the configuration data in hiera. The
+module itself is using hiera for its default data.
 
 ### Beginning with slurm
 
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most basic
-use of the module.
+By just including the `slurm` class as follow, the node is setup as a SLURM client and the defaults
+set in module's `common.yaml` is applied:
+
+```
+include slurm
+```
+
+Other use cases are outlined in the right below.
 
 ## Usage
 
-Include usage examples for common use cases in the **Usage** section. Show your
-users how to use your module to solve problems, and be sure to include code
-examples. Include three to five examples of the most important or common tasks a
-user can accomplish with your module. Show users how to accomplish more complex
-tasks that involve different types, classes, and functions working in tandem.
+By just including the class `slurm` the given host acts as a SLURM client. This is the role primarily used on thing like
+login nodes.
+
+On a worker node the daemon `slurmd` is needed. To designate a node as a worker node, the following snippet will do the job.
+
+```
+class { 'slurm':
+  slurmd => true,
+}
+```
+
+Likewise for the designation of a slurm control daemon, the parameter `slurmctld` is used. In the following example, not only the
+control daemon gets installed but also the `slurmdbd` daemon to connect to a MySQSL database server. Setting up the database server
+itself is out of the scope of this module and has to be installed elsewhere.
+
+```
+class { 'slurm':
+  slurmdbd  => true,
+  slurmctld => true,
+}
+```
+
+All of the parameters can also be set by putting the configuration data to hiera and make use automatic parameter binding feature of Puppet.
+
+For all possible configuration parameters the reference below should be consulted.
 
 ## Reference
 
-This section is deprecated. Instead, add reference information to your code as
-Puppet Strings comments, and then use Strings to generate a REFERENCE.md in your
-module. For details on how to add code comments and generate documentation with
-Strings, see the [Puppet Strings documentation][2] and [style guide][3].
-
-If you aren't ready to use Strings yet, manually create a REFERENCE.md in the
-root of your module directory and list out each of your module's classes,
-defined types, facts, functions, Puppet tasks, task plans, and resource types
-and providers, along with the parameters for each.
-
-For each element (class, defined type, function, and so on), list:
-
-* The data type, if applicable.
-* A description of what the element does.
-* Valid values, if the data type doesn't make it obvious.
-* Default value, if any.
-
-For example:
-
-```
-### `pet::cat`
-
-#### Parameters
-
-##### `meow`
-
-Enables vocalization in your cat. Valid options: 'string'.
-
-Default: 'medium-loud'.
-```
+See [REFRENCE.md](REFERENCE.md) in this repository.
 
 ## Limitations
 
-In the Limitations section, list any incompatibilities, known issues, or other
-warnings.
+This module is currently only tested on CentOS-7.
 
 ## Development
 
-In the Development section, tell other users the ground rules for contributing
-to your project and how they should submit their work.
+This project is using PDK and feature unit tests. In order to participate, please take the time
+to get into it to if not already familiar with.
 
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel are
-necessary or important to include here. Please use the `##` header.
-
-[1]: https://puppet.com/docs/pdk/latest/pdk_generating_modules.html
-[2]: https://puppet.com/docs/puppet/latest/puppet_strings.html
-[3]: https://puppet.com/docs/puppet/latest/puppet_strings_style.html
+If you want to contribute to this project:
+* File an issue over at [github.com](https://github.com/hpc-unibe-ch/puppet-module-slurm/issues) telling us about the changes you have mind
+* Fork the repository and make your changes on a feature branch
+* Genereate a pull request against the `main` branch. Don't forget to rebase before creating a PR.

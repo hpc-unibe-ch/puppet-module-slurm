@@ -3,6 +3,10 @@
 ---
 fixtures:
   forge_modules:
+    firewall:
+      repo: "puppetlabs-firewall"
+    stdlib:
+      repo: "puppetlabs-stdlib"
     logrotate:
       repo: "puppet-logrotate"
     systemd:

@@ -7,14 +7,14 @@ class slurm::slurmd::service {
     group   => 'root',
     mode    => '0644',
     content => template('slurm/sysconfig/slurmd.erb'),
-    notify  => Service['slurmd'],
+    notify  => $slurm::slurmd_notify,
   }
 
   if ! empty($slurm::slurmd_service_limits) {
     systemd::service_limits { 'slurmd.service':
       limits          => $slurm::slurmd_service_limits,
       restart_service => false,
-      notify          => Service['slurmd'],
+      notify          => $slurm::slurmd_notify,
     }
   }
 
