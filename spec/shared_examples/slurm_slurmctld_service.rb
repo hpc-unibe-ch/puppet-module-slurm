@@ -17,7 +17,6 @@ shared_examples_for 'slurm::slurmctld::service' do
       .with_path(%r{/usr/bin})
       .with_command('scontrol reconfigure')
       .with_refreshonly('true')
-
   end
 
   context 'with defaults slurmctld should be reloaded on config change' do
