@@ -1,6 +1,6 @@
 {
   "name": "hpcunibech-slurm",
-  "version": "1.0.0",
+  "version": "1.1.1",
   "author": "hpc-unibe-ch",
   "summary": "Manages Slurm schduler installation for diffrent node roles. DOES NOT manage slurm configuration",
   "license": "Apache-2.0",
