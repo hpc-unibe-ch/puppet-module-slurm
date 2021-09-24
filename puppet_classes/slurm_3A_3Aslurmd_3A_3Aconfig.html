@@ -109,8 +109,8 @@ class slurm::slurmd::config {
   file { &#39;SlurmdSpoolDir&#39;:
     ensure =&gt; &#39;directory&#39;,
     path   =&gt; $slurm::slurmd_spool_dir,
-    owner  =&gt; $slurm::slurmd_user,
-    group  =&gt; $slurm::slurmd_user_group,
+    owner  =&gt; $slurm::slurm_user,
+    group  =&gt; $slurm::slurm_group,
     mode   =&gt; &#39;0755&#39;,
   }
 }</pre>

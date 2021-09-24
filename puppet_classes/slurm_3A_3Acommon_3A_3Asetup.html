@@ -141,8 +141,8 @@
 
 class slurm::common::setup {
 
-    file { &#39;slurm confdir&#39;:
-    ensure =&gt; &#39;directory&#39;,
+  file { &#39;slurm confdir&#39;:
+    ensure =&gt; directory,
     path   =&gt; $slurm::conf_dir,
     owner  =&gt; &#39;root&#39;,
     group  =&gt; &#39;root&#39;,
@@ -152,9 +152,9 @@ class slurm::common::setup {
   # Don&#39;t need these directories on a client - all other roles need them
   if $slurm::slurmctld or $slurm::slurmdbd or $slurm::slurmd {
     file { $slurm::log_dir:
-      ensure =&gt; &#39;directory&#39;,
+      ensure =&gt; directory,
       owner  =&gt; $slurm::slurm_user,
-      group  =&gt; $slurm::slurm_user_group,
+      group  =&gt; $slurm::slurm_group,
       mode   =&gt; &#39;0750&#39;,
     }
 

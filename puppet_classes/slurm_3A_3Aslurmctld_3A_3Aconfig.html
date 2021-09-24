@@ -118,7 +118,7 @@ class slurm::slurmctld::config {
     ensure =&gt; &#39;directory&#39;,
     path   =&gt; $slurm::slurmctld_state_save_location,
     owner  =&gt; $slurm::slurm_user,
-    group  =&gt; $slurm::slurm_user_group,
+    group  =&gt; $slurm::slurm_group,
     mode   =&gt; &#39;0700&#39;,
   }
 
@@ -126,7 +126,7 @@ class slurm::slurmctld::config {
     ensure =&gt; &#39;directory&#39;,
     path   =&gt; $slurm::slurmctld_job_checkpoint_dir,
     owner  =&gt; $slurm::slurm_user,
-    group  =&gt; $slurm::slurm_user_group,
+    group  =&gt; $slurm::slurm_group,
     mode   =&gt; &#39;0700&#39;,
   }
 }</pre>

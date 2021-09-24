@@ -72,15 +72,25 @@
 </div>
 
   <h2>Summary</h2>
-  Simplicistic module to manage Slurm installation
+  Main class that manages every aspect centrally
 
 <h2>Overview</h2>
 <div class="docstring">
   <div class="discussion">
     
-<p>This module currently helps to install. However it does not configure Slurm in terms of contents in /etc/slurm (slurm.conf, gres.conf, …). Currently the module manages: * Installation of RPMs for given role * Creation of user and group slurm</p>
+<p>This module currently orchestrates every installation aspect. However it does not configure Slurm in terms of contents in /etc/slurm (slurm.conf# gres.conf, …). These aspects have to be handled elsewhere, i.e. in a separate git repository.</p>
+
+<p>Currently the module manages: * Installation of RPMs for the selected features * Creation of user and group slurm * Manage files, directories and services accoridng to the selected features</p>
+
+<p>Features supported include: * client: only slurm commands, no additional services running * slurmd: slurm daemom is installed and started * slurmdbd: slurm database daemon is installed and started * slurmctld: slurm control daemon is installed and started</p>
+
+<p>Features can be added up on the same node!</p>
 
 <p>Note on config: Just store contents of <code>/etc/slurm</code> in a git repo and clone it on your shared filesystem to the final path using <code>puppetlabs-vcsrepo</code>.</p>
+
+<p>}</p>
+
+<p>Slurm user and group management related options</p>
 
   </div>
 </div>
@@ -92,7 +102,28 @@
     <p class="tag_title">Examples:</p>
     
       
-      <pre class="example code"><code>class { &#39;slurm&#39;:</code></pre>
+        <p class="example_title"><div class='inline'>
+<p>Basic setup of a compute node with memlock set to unlimited and increased number of open files</p>
+</div></p>
+      
+      <pre class="example code"><code>class { &#39;slurm&#39;:
+  slurmd                =&gt; true,
+  slurmd_service_limits =&gt; {
+    &#39;LimitMEMLOCK&#39; =&gt; &#39;infinity&#39;,
+    &#39;LimitNOFILE&#39;  =&gt; 8192,
+  },
+  manage_firewall       =&gt; true,</code></pre>
+    
+      
+        <p class="example_title"><div class='inline'>
+<p>Setup of a slurm master with slurmctld and slurmdbd on the same host; reloading services is prevented</p>
+</div></p>
+      
+      <pre class="example code"><code>class { &#39;slurm&#39;:
+  slurmdbd        =&gt; true,
+  slurmctld       =&gt; true,
+  reload_services =&gt; false,
+}</code></pre>
     
   </div>
 <p class="tag_title">Parameters:</p>
@@ -107,6 +138,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The feature only installs the basic commands; no daemons get deployed; defaults s true</p>
+</div>
+      
     </li>
   
     <li>
@@ -117,6 +153,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The feature installis the slurm daemon, useful on a compute node; default is false</p>
+</div>
       
     </li>
   
@@ -129,6 +170,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>This feature installs the slurm database daemon to talk to a MySQL database server: default is false</p>
+</div>
+      
     </li>
   
     <li>
@@ -139,6 +185,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>This feature installs the slurm control daemon: default is false</p>
+</div>
       
     </li>
   
@@ -151,6 +202,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The defeault package ensure is set to &#39;present&#39;; use other values if needed</p>
+</div>
+      
     </li>
   
     <li>
@@ -161,6 +217,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Should the module deploy user and gropu to be used for slurm aspects; defaults to true</p>
+</div>
       
     </li>
   
@@ -173,6 +234,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The username to use for ownerships of files/directories and services; default is &#39;slurm&#39;</p>
+</div>
+      
     </li>
   
     <li>
@@ -184,27 +250,42 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The numeric id for the slurm user; default is 468</p>
+</div>
+      
     </li>
   
     <li>
       
-        <span class='name'>slurm_user_group</span>
+        <span class='name'>slurm_group</span>
       
       
         <span class='type'>(<tt>Optional[String]</tt>)</span>
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The group name to use for ownerships of files/directories and services; default is &#39;slurm&#39;</p>
+</div>
+      
     </li>
   
     <li>
       
-        <span class='name'>slurm_user_group_gid</span>
+        <span class='name'>slurm_group_gid</span>
       
       
         <span class='type'>(<tt>Optional[Integer]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The numeric id for the slurm group; default is 468</p>
+</div>
       
     </li>
   
@@ -217,6 +298,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>If changes to configuration files occur, should a relaod of the services be done automatically? Default is true</p>
+</div>
+      
     </li>
   
     <li>
@@ -227,6 +313,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>If changes to configuration files occur, should a restart of the services be done automatically; default is false</p>
+</div>
       
     </li>
   
@@ -239,6 +330,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The defualt state of the slurm daemon; default is &#39;running&#39;</p>
+</div>
+      
     </li>
   
     <li>
@@ -249,6 +345,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Should the slurm daemon be enabled by systemd; default is true</p>
+</div>
       
     </li>
   
@@ -261,6 +362,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>A hash of system resource limits for the slurm daemon, see example; default is empty hash</p>
+</div>
+      
     </li>
   
     <li>
@@ -271,6 +377,11 @@
         <span class='type'>(<tt>Optional[String]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>The defualt state of the slurm database daemon; default is &#39;running&#39;</p>
+</div>
       
     </li>
   
@@ -283,6 +394,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>Should the slurm database daemon be enabled by systemd; default is true</p>
+</div>
+      
     </li>
   
     <li>
@@ -293,6 +409,11 @@
         <span class='type'>(<tt>Optional[Hash]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>A hash of system resource limits for the slurm database daemon, see example; default is empty hash</p>
+</div>
       
     </li>
   
@@ -305,6 +426,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>The defualt state of the slurm control daemon; default is &#39;running&#39;</p>
+</div>
+      
     </li>
   
     <li>
@@ -315,6 +441,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Should the slurm control daemon be enabled by systemd; default is true</p>
+</div>
       
     </li>
   
@@ -327,6 +458,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>A hash of system resource limits for the slurm control daemon, see example; default is empty hash</p>
+</div>
+      
     </li>
   
     <li>
@@ -338,6 +474,11 @@
       
       
       
+        &mdash;
+        <div class='inline'>
+<p>Should the module manage the logrotaiton of slurm logs; default is true</p>
+</div>
+      
     </li>
   
     <li>
@@ -348,6 +489,11 @@
         <span class='type'>(<tt>Optional[Boolean]</tt>)</span>
       
       
+      
+        &mdash;
+        <div class='inline'>
+<p>Should the module configure the firewall rules for installed services; default is false</p>
+</div>
       
     </li>
   
@@ -362,79 +508,6 @@
         <pre class="lines">
 
 
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86
-87
-88
 89
 90
 91
@@ -473,10 +546,84 @@
 124
 125
 126
-127</pre>
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201</pre>
       </td>
       <td>
-        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 16</span>
+        <pre class="code"><span class="info file"># File 'manifests/init.pp', line 89</span>
 
 class slurm (
   Optional[Boolean] $client,
@@ -488,8 +635,8 @@ class slurm (
   Optional[Boolean] $manage_slurm_user,
   Optional[String]  $slurm_user,
   Optional[Integer] $slurm_user_uid,
-  Optional[String]  $slurm_user_group,
-  Optional[Integer] $slurm_user_group_gid,
+  Optional[String]  $slurm_group,
+  Optional[Integer] $slurm_group_gid,
   # Services related options
   Optional[Boolean] $reload_services,
   Optional[Boolean] $restart_services,
@@ -543,7 +690,7 @@ class slurm (
   $slurmdbd_conf_path            = &quot;${conf_dir}/slurmdbd.conf&quot;
   $cgroup_conf_path              = &quot;${conf_dir}/cgroup.conf&quot;
 
-  # Compute which services are to be notified and how to notify these on changes
+  # Compute which resources are to be notified and how to notify these on changes
   if $slurmd and $slurmd_service_ensure == &#39;running&#39; and $reload_services and $facts[&#39;slurmd_version&#39;] {
     $slurmd_notify = Exec[&#39;slurmd reload&#39;]
   } elsif $slurmd and $slurmd_service_ensure == &#39;running&#39; and $restart_services {
@@ -567,7 +714,8 @@ class slurm (
   } else {
     $slurmdbd_notify = undef
   }
-  # finally combine the ones not undef to an array for later use in slurm::common::install
+
+  # in addition combine the ones not undef to an array for later use in slurm::common::install
   $service_notify = flatten([$slurmd_notify, $slurmctld_notify, $slurmdbd_notify]).filter |$val| { $val =~ NotUndef }
 
   if ! ($client or $slurmd or $slurmdbd or $slurmctld) {
